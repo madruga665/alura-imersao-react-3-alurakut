@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Box from "../src/components/Box";
 import MainGrid from "../src/components/MainGrid";
 import { ProfileRelationsBoxWrapper } from "../src/components/ProfileRelations";
@@ -24,6 +24,28 @@ function ProfileSidebar(props) {
   );
 }
 
+function ProfileRelationsBox(props) {
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className='smallTitle'>
+        {props.title} ({props.items.length})
+      </h2>
+      <ul>
+        {/* {seguidores.map((itemAtual) => {
+          return (
+            <li key={itemAtual.id}>
+              <a href={`/users/${itemAtual}.title`} key={itemAtual.title}>
+                <img src={itemAtual.image} />
+                <span>{itemAtual.title}</span>
+              </a>
+            </li>
+          );
+        })} */}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  );
+}
+
 export default function Home() {
   const [comunidades, setComunidades] = useState([
     {
@@ -42,6 +64,16 @@ export default function Home() {
     "marcobrunodev",
     "felipefialho",
   ];
+  const [seguidores, setSeguidores] = useState([]);
+  useEffect(function() {
+    fetch("https://api.github.com/users/madruga665/followers")
+      .then(function (respostaDoServidor) {
+        return respostaDoServidor.json();
+      })
+      .then(function (respostaCompleta) {
+        setSeguidores(respostaCompleta);
+      });
+  }, []);
 
   return (
     <>
@@ -93,6 +125,7 @@ export default function Home() {
           </Box>
         </div>
         <div className='profileRelationsArea' style={{ gridArea: "profileRelationsArea" }}>
+          <ProfileRelationsBox title='Seguidores' items={seguidores} />
           <ProfileRelationsBoxWrapper>
             <h2 className='smallTitle'>Comunidades ({comunidades.length})</h2>
             <ul>
